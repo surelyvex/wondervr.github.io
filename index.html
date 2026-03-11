@@ -5,8 +5,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PARALLAX STUDIOS — META QUEST VR DEVELOPMENT</title>
-<link href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
+/* Font fallback in case Google Fonts blocked */
+@font-face {
+  font-family: 'Kode Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  src: local('Courier New'), local('Courier');
+  font-display: swap;
+}
 :root {
   --bg:      #05050a;
   --bg2:     #08080f;
@@ -17,8 +27,8 @@
   --red:     #ff2d55;
   --grid:    rgba(0,229,255,0.035);
   --border:  rgba(0,229,255,0.15);
-  --mono:    'Kode Mono', monospace;
-  --body:    'DM Sans', sans-serif;
+  --mono:    'Kode Mono', 'Courier New', Courier, monospace;
+  --body:    'DM Sans', system-ui, -apple-system, sans-serif;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -48,7 +58,7 @@ nav {
 position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
 display: flex; align-items: center; justify-content: space-between;
 padding: 18px 52px;
-background: rgba(5,5,10,.85); backdrop-filter: blur(16px);
+background: rgba(5,5,10,.92); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
 border-bottom: 1px solid var(–border);
 }
 .n-logo { display: flex; flex-direction: column; text-decoration: none; gap: 2px; }
@@ -74,8 +84,8 @@ transform-origin: center bottom;
 background-image: linear-gradient(rgba(0,229,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,.15) 1px, transparent 1px);
 background-size: 64px 64px;
 animation: pgscroll 5s linear infinite;
-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
 -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
 }
 @keyframes pgscroll { from{background-position:0 0} to{background-position:0 64px} }
 
@@ -94,7 +104,7 @@ mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
 .cube-wrap { position: absolute; right: 8%; top: 50%; transform: translateY(-50%); pointer-events: none; }
 .scene { width: 200px; height: 200px; perspective: 560px; }
 .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: cspin 16s linear infinite; }
-@keyframes cspin { from{transform:rotateX(22deg) rotateY(0deg)} to{transform:rotateX(22deg) rotateY(360deg)} }
+@keyframes cspin { 0%{transform:rotateX(22deg) rotateY(0deg)} 100%{transform:rotateX(22deg) rotateY(360deg)} }
 .face { position: absolute; inset: 0; backface-visibility: visible; border: 1px solid rgba(0,229,255,.28); background: rgba(0,229,255,.015); }
 .face::before { content:’’; position: absolute; inset: 16px; border: 1px solid rgba(0,229,255,.1); }
 .cf  { transform: translateZ(100px); }
@@ -105,7 +115,7 @@ mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
 .cbo { transform: translateY(100px) rotateX(-90deg); }
 
 .pt { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: var(–accent); pointer-events: none; opacity: 0; animation: ptf linear infinite; }
-@keyframes ptf { 0%{opacity:0;transform:translateY(0) translateX(0)} 10%{opacity:.7} 90%{opacity:.2} 100%{opacity:0;transform:translateY(-100vh) translateX(var(–dx,0px))} }
+@keyframes ptf { 0%{opacity:0;transform:translateY(0)} 10%{opacity:.7} 90%{opacity:.2} 100%{opacity:0;transform:translateY(-100vh)} }
 
 .brk { position: absolute; width: 40px; height: 40px; pointer-events: none; opacity: .35; }
 .brk svg { width: 100%; height: 100%; }
@@ -118,7 +128,24 @@ mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
 .h-eyebrow { font-family: var(–mono); font-size: 10px; letter-spacing: .35em; color: var(–accent); text-transform: uppercase; display: flex; align-items: center; gap: 14px; margin-bottom: 28px; opacity: 0; animation: fup .7s ease forwards .1s; }
 .h-eyebrow::before { content:’’; width: 28px; height: 1px; background: var(–accent); flex-shrink: 0; }
 .h-title { font-family: var(–mono); font-size: clamp(60px, 8.5vw, 120px); font-weight: 700; line-height: .9; letter-spacing: -.02em; text-transform: uppercase; margin-bottom: 28px; opacity: 0; animation: fup .7s ease forwards .3s; }
-.h-title .outline { -webkit-text-stroke: 1.5px var(–fg); color: transparent; display: block; }
+.h-title .outline {
+display: block;
+color: transparent;
+-webkit-text-stroke: 1.5px #efefef;
+text-stroke: 1.5px #efefef;
+/* Fallback for browsers that don’t support text-stroke */
+text-shadow: none;
+}
+@supports not (-webkit-text-stroke: 1px #fff) {
+.h-title .outline {
+color: transparent;
+text-shadow:
+-1px -1px 0 #efefef,
+1px -1px 0 #efefef,
+-1px  1px 0 #efefef,
+1px  1px 0 #efefef;
+}
+}
 .h-title .solid   { display: block; }
 .h-title .acc     { color: var(–accent); }
 .h-sub { font-size: 15px; line-height: 1.75; color: var(–dim); font-weight: 300; max-width: 400px; margin-bottom: 44px; opacity: 0; animation: fup .7s ease forwards .5s; }
@@ -759,48 +786,60 @@ footer { flex-direction: column; gap: 20px; text-align: center; }
 </footer>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+
 // CURSOR
 const cur = document.getElementById('cur');
 const curR = document.getElementById('cur-r');
 let mx=0, my=0, rx=0, ry=0;
-document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+document.addEventListener('mousemove', function(e) { mx=e.clientX; my=e.clientY; });
 (function animCur(){
   rx += (mx-rx)*.18; ry += (my-ry)*.18;
   cur.style.left=mx+'px'; cur.style.top=my+'px';
   curR.style.left=rx+'px'; curR.style.top=ry+'px';
   requestAnimationFrame(animCur);
 })();
-document.querySelectorAll('a,button,.game-card,.tech-card,.member-card').forEach(el=>{
-  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+document.querySelectorAll('a,button,.game-card,.tech-card,.member-card').forEach(function(el){
+  el.addEventListener('mouseenter', function(){ document.body.classList.add('hov'); });
+  el.addEventListener('mouseleave', function(){ document.body.classList.remove('hov'); });
 });
 
 // PARALLAX DEPTH LAYERS
 const layers = document.querySelectorAll('.dl');
-window.addEventListener('mousemove', e => {
-  const cx=window.innerWidth/2, cy=window.innerHeight/2;
-  const dx=e.clientX-cx, dy=e.clientY-cy;
-  layers.forEach(l=>{
-    const s=parseFloat(l.dataset.speed||.05);
-    l.style.transform=`translate(${dx*s}px,${dy*s}px)`;
+window.addEventListener('mousemove', function(e) {
+  var cx=window.innerWidth/2, cy=window.innerHeight/2;
+  var dx=e.clientX-cx, dy=e.clientY-cy;
+  layers.forEach(function(l){
+    var s=parseFloat(l.dataset.speed||.05);
+    l.style.transform='translate('+dx*s+'px,'+dy*s+'px)';
   });
 });
 
 // PARTICLES
-const hero = document.getElementById('hero');
-for(let i=0;i<30;i++){
-  const p=document.createElement('div');
-  p.className='pt';
-  const size=1+Math.random()*2;
-  p.style.cssText=`left:${Math.random()*100}%;bottom:${Math.random()*20}%;width:${size}px;height:${size}px;--dx:${(Math.random()-.5)*140}px;animation-duration:${7+Math.random()*10}s;animation-delay:${Math.random()*9}s;`;
-  hero.appendChild(p);
+var hero = document.getElementById('hero');
+if(hero) {
+  for(var i=0;i<30;i++){
+    var p=document.createElement('div');
+    p.className='pt';
+    var size=1+Math.random()*2;
+    var dx=(Math.random()-.5)*140;
+    p.style.cssText='left:'+Math.random()*100+'%;bottom:'+Math.random()*20+'%;width:'+size+'px;height:'+size+'px;--dx:'+dx+'px;animation-duration:'+(7+Math.random()*10)+'s;animation-delay:'+Math.random()*9+'s;';
+    hero.appendChild(p);
+  }
 }
 
 // SCROLL REVEAL
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
-},{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+if('IntersectionObserver' in window) {
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+} else {
+  // Fallback for old browsers — just show everything
+  document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('visible'); });
+}
+
+}); // end DOMContentLoaded
 </script>
 
 </body>
